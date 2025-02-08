@@ -1,6 +1,6 @@
 import os
 import json
-import  fitz # PyMuPDF
+import fitz  # PyMuPDF
 from PIL import Image
 import subprocess
 
@@ -23,27 +23,30 @@ def extract_first_page_as_image(pdf_path):
     return image_path
 
 def fetch_books():
-    books = []
-    books_folder = 'books'
-    images_folder = os.path.join(books_folder, 'images')
+    books_data = {}
+    images_folder = os.path.join('books', 'images')
     os.makedirs(images_folder, exist_ok=True)
 
-    for book_file in os.listdir(books_folder):
-        if book_file.endswith('.txt'):
-            with open(os.path.join(books_folder, book_file), 'r', encoding='utf-8') as file:
-                content = file.read()
-                title = book_file.replace('.txt', '')
-                books.append({'title': title, 'content': content, 'image': None, 'flipbook': None})
-        elif book_file.endswith('.pdf'):
-            pdf_path = os.path.join(books_folder, book_file)
-            image_path = extract_first_page_as_image(pdf_path)
-            flipbook_path = convert_pdf_to_flipbook(pdf_path)
-            content, _ = extract_text_from_pdf(pdf_path)
-            title = book_file.replace('.pdf', '')
-            books.append({'title': title, 'content': content, 'image': image_path, 'flipbook': flipbook_path})
+    for category in os.listdir('books'):
+        category_path = os.path.join('books', category)
+        if os.path.isdir(category_path) and category != 'images':
+            books_data[category] = []
+            for book_file in os.listdir(category_path):
+                if book_file.endswith('.txt'):
+                    with open(os.path.join(category_path, book_file), 'r', encoding='utf-8') as file:
+                        content = file.read()
+                        title = book_file.replace('.txt', '')
+                        books_data[category].append({'title': title, 'content': content, 'image': None, 'flipbook': None})
+                elif book_file.endswith('.pdf'):
+                    pdf_path = os.path.join(category_path, book_file)
+                    image_path = extract_first_page_as_image(pdf_path)
+                    flipbook_path = convert_pdf_to_flipbook(pdf_path)
+                    content, _ = extract_text_from_pdf(pdf_path)
+                    title = book_file.replace('.pdf', '')
+                    books_data[category].append({'title': title, 'content': content, 'image': image_path, 'flipbook': flipbook_path})
 
     with open('books.json', 'w', encoding='utf-8') as json_file:
-        json.dump(books, json_file, ensure_ascii=False, indent=4)
+        json.dump(books_data, json_file, ensure_ascii=False, indent=4)
 
 def extract_text_from_pdf(pdf_path):
     doc = fitz.open(pdf_path)
