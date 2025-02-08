@@ -1,0 +1,28 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 40px;
+    line-height: 1.6;
+}
+
+h1 {
+    color: #333;
+}
+
+.book {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.book h2 {
+    margin: 0;
+}
+
+.book p {
+    margin: 5px 0;
+}
+
+.book img {
+    max-width: 100px;
+    margin: 10px 0;
+}
